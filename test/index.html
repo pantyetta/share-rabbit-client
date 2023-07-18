@@ -7,9 +7,29 @@
 </head>
 <body>
     <script>
-        let connection = new WebSocket("ws://127.0.0.1");
-        connection.binaryType = "arraybuffer"
+        const data = class{
+            type = "";
+            msg = "";
 
+            constructor(type, msg){
+                this.type = type;
+                this.msg = msg;
+            }
+        }
+
+
+        let connection = null;
+
+        const connect = () =>{
+            try {
+                connection = new WebSocket("ws://127.0.0.1");
+                connection.binaryType = "arraybuffer";
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        connect();
 
         //通信が接続された場合
         connection.onopen = function(e) {
@@ -18,18 +38,32 @@
 
         //エラーが発生した場合
         connection.onerror = function(e) {
-            console.error(e)
+            console.error(e);
         };
 
         //メッセージを受け取った場合
         connection.onmessage = function(e) {
-            console.log("get Message", e);
-         };
+            console.log(e.data);
+            const json = JSON.parse(e.data);
+            console.log("receive", json)
+        };
 
         //通信が切断された場合
         connection.onclose = function(e) {
-            console.error("Connection lost", e);
+            console.error("Connection close", e);
         };
+
+        const ping = () =>{
+            const json = JSON.stringify(new data("ping", "ping"))
+            console.log("send", json);
+            connection.send(json);
+        }
+
+        const echo = (msg) =>{
+            const json = JSON.stringify(new data("echo", msg))
+            console.log("send", json);
+            connection.send(json);
+        }
     </script>
 </body>
 </html>
