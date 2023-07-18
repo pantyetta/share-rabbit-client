@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let connection = new WebSocket("ws://127.0.0.1");
+        connection.binaryType = "arraybuffer"
+
+
+        //通信が接続された場合
+        connection.onopen = function(e) {
+            console.log("Connection Opne", e);
+        };
+
+        //エラーが発生した場合
+        connection.onerror = function(e) {
+            console.error(e)
+        };
+
+        //メッセージを受け取った場合
+        connection.onmessage = function(e) {
+            console.log("get Message", e);
+         };
+
+        //通信が切断された場合
+        connection.onclose = function(e) {
+            console.error("Connection lost", e);
+        };
+    </script>
+</body>
+</html>
