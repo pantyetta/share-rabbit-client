@@ -22,7 +22,7 @@
 
         const connect = () =>{
             try {
-                connection = new WebSocket("ws://127.0.0.1");
+                connection = new WebSocket("ws://192.168.1.51");
                 connection.binaryType = "arraybuffer";
             } catch (error) {
                 console.error(error);
@@ -43,7 +43,6 @@
 
         //メッセージを受け取った場合
         connection.onmessage = function(e) {
-            console.log(e.data);
             const json = JSON.parse(e.data);
             console.log("receive", json)
         };
@@ -61,6 +60,24 @@
 
         const echo = (msg) =>{
             const json = JSON.stringify(new data("echo", msg))
+            console.log("send", json);
+            connection.send(json);
+        }
+
+        const tell = (msg) =>{
+            const json = JSON.stringify(new data("tell", msg))
+            console.log("send", json);
+            connection.send(json);
+        }
+
+        const rename = (name) =>{
+            const json = JSON.stringify(new data("rename", name))
+            console.log("send", json);
+            connection.send(json);
+        }
+
+        const get = () =>{
+            const json = JSON.stringify(new data("get"))
             console.log("send", json);
             connection.send(json);
         }
