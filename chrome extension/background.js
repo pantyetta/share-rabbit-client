@@ -8,7 +8,6 @@ chrome.runtime.onInstalled.addListener(async () =>{
 });
 
 chrome.contextMenus.onClicked.addListener((item, tab) => {
-    const tld = item.menuItemId;
     console.log(tab.url);
     tell(tab.url);
 });
@@ -24,7 +23,7 @@ const data = class{
 }
 
 
-let connection = WebSocket;
+let connection = null;
 
 const connect = async () => {
     return new Promise((resolve, reject) => {
@@ -44,14 +43,27 @@ const connect = async () => {
             };
     
             //メッセージを受け取った場合
-            connection.onmessage = function(e) {
+            connection.onmessage = async function(e) {
                 const json = JSON.parse(e.data);
                 console.log("receive", json)
+                if(json.type == "tell"){
+                    await addValue(json.msg);
+                }else if(json.type == "get"){
+                    json.history.forEach(async value => {
+                        await addValue(value);
+                    });
+                }
             };
     
             //通信が切断された場合
             connection.onclose = function(e) {
                 console.error("Connection close", e);
+                connection = null;
+                setTimeout(async () =>{
+                    await connect();
+                    rename("pancho");
+                    pingLoop();
+                }, 10 * 1000)
             };
         } catch (error) {
             console.error(error);
@@ -93,4 +105,58 @@ const get = () =>{
 (async function(){
     await connect();
     rename("pancho");
+    pingLoop();
 })();
+
+async function getData(key) {
+    return new Promise((resolve) => {
+      chrome.storage.local.get(key, (result) => {
+        resolve(result[key]);
+      });
+    });
+}
+
+const openTab = async (nId) => {
+    const url = await getData(nId);
+    chrome.tabs.create({
+        url: url
+    });
+    chrome.notifications.clear(nId);
+}
+
+chrome.notifications.onClicked.addListener(
+    openTab,
+)
+
+const addValue = async (url) => {
+
+    const option ={
+        type: "basic",
+        title: "Share Rabbit",
+        message: url,
+        iconUrl: "icon128.png",
+    };
+    
+    const nId = new Date().getTime().toString();
+
+    chrome.notifications.create(
+        nId,
+        option,
+    );
+
+    await chrome.storage.local.set({ [nId]: url });
+}
+
+const pingLoop = async () => {
+    return new Promise((resolve, reject) =>{
+        setTimeout(async () => {
+            if(connection == null){
+                reject();
+            }else{
+                ping();
+                resolve();
+                await pingLoop();
+            }
+        }, 15 * 1000);
+    })
+}
