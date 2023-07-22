@@ -1,0 +1,11 @@
+{
+    "name": "Share Rabbit Client",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": [
+        "contextMenus"
+    ]
+}
