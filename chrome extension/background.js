@@ -7,11 +7,6 @@ chrome.runtime.onInstalled.addListener(async () =>{
       });
 });
 
-chrome.contextMenus.onClicked.addListener((item, tab) => {
-    console.log(tab.url);
-    tell(tab.url);
-});
-
 const data = class{
     type = "";
     msg = "";
@@ -33,6 +28,8 @@ const connect = async () => {
             //通信が接続された場合
             connection.onopen = function(e) {
                 console.log("Connection Opne", e);
+                rename("pancho");
+                pingLoop();
                 resolve();
             };
     
@@ -102,12 +99,6 @@ const get = () =>{
     connection.send(json);
 }
 
-(async function(){
-    await connect();
-    rename("pancho");
-    pingLoop();
-})();
-
 async function getData(key) {
     return new Promise((resolve) => {
       chrome.storage.local.get(key, (result) => {
@@ -160,3 +151,14 @@ const pingLoop = async () => {
         }, 15 * 1000);
     })
 }
+
+chrome.runtime.onStartup.addListener(
+    (async () => {
+        await connect();
+    })
+);
+
+chrome.contextMenus.onClicked.addListener((item, tab) => {
+    console.log(tab.url);
+    tell(tab.url);
+});

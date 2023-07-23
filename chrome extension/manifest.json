@@ -14,6 +14,7 @@
         "contextMenus",
         "notifications",
         "storage",
-        "tabs"
+        "tabs",
+        "background"
     ]
 }
