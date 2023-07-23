@@ -26,9 +26,12 @@ const connect = async () => {
             connection = new WebSocket("ws://127.0.0.1");
             connection.binaryType = "arraybuffer";
             //通信が接続された場合
-            connection.onopen = function(e) {
+            connection.onopen = async function(e) {
                 console.log("Connection Opne", e);
-                rename("pancho");
+                const name = await getData("name");
+                if(name){
+                    rename("pancho");
+                }
                 pingLoop();
                 resolve();
             };
@@ -58,7 +61,10 @@ const connect = async () => {
                 connection = null;
                 setTimeout(async () =>{
                     await connect();
-                    rename("pancho");
+                    const name = await getData("name");
+                    if(name){
+                        rename("pancho");
+                    }
                     pingLoop();
                 }, 10 * 1000)
             };
@@ -151,6 +157,8 @@ const pingLoop = async () => {
         }, 15 * 1000);
     })
 }
+
+connect();
 
 chrome.runtime.onStartup.addListener(
     (async () => {
