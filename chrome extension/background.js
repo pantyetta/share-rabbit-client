@@ -1,10 +1,15 @@
 chrome.runtime.onInstalled.addListener(async () =>{
-    chrome.contextMenus.create({
+    await chrome.storage.local.set({ ["url"]: "ws://127.0.0.1" });
+    await chrome.storage.local.set({ ["uid"]: "" });
+    await chrome.storage.local.set({ ["history"]: new Object });
+
+    await chrome.contextMenus.create({
         id: "share-rabiit-client",
         title: "共有する",
         type: 'normal',
         contexts: ['all']
       });
+
 });
 
 const data = class{
@@ -21,19 +26,20 @@ const data = class{
 let connection = null;
 
 const connect = async () => {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
-            connection = new WebSocket("ws://127.0.0.1");
+            const url = await getData("url") || "ws://127.0.0.1";
+            connection = new WebSocket(url);
             connection.binaryType = "arraybuffer";
             //通信が接続された場合
             connection.onopen = async function(e) {
                 console.log("Connection Opne", e);
-                const name = await getData("name");
+                const name = await getData("uid");
                 if(name){
-                    rename("pancho");
+                    rename(name);
                 }
-                pingLoop();
                 resolve();
+                await pingLoop();
             };
     
             //エラーが発生した場合
@@ -48,10 +54,12 @@ const connect = async () => {
                 console.log("receive", json)
                 if(json.type == "tell"){
                     await addValue(json.msg);
+                    await chrome.runtime.sendMessage("update");
                 }else if(json.type == "get"){
-                    json.history.forEach(async value => {
-                        await addValue(value);
-                    });
+                    for (const key in json.history) {
+                        await addValue(key, json.history[key]);
+                    }
+                    await chrome.runtime.sendMessage("update");
                 }
             };
     
@@ -61,11 +69,6 @@ const connect = async () => {
                 connection = null;
                 setTimeout(async () =>{
                     await connect();
-                    const name = await getData("name");
-                    if(name){
-                        rename("pancho");
-                    }
-                    pingLoop();
                 }, 10 * 1000)
             };
         } catch (error) {
@@ -75,33 +78,32 @@ const connect = async () => {
     });
 }
 
+const close = () => {
+    connection.close();
+}
+
 const ping = () =>{
     const json = JSON.stringify(new data("ping", "ping"))
-    console.log("send", json);
     connection.send(json);
 }
 
 const echo = (msg) =>{
     const json = JSON.stringify(new data("echo", msg))
-    console.log("send", json);
     connection.send(json);
 }
 
 const tell = (msg) =>{
     const json = JSON.stringify(new data("tell", msg))
-    console.log("send", json);
     connection.send(json);
 }
 
 const rename = (name) =>{
     const json = JSON.stringify(new data("rename", name))
-    console.log("send", json);
     connection.send(json);
 }
 
 const get = () =>{
     const json = JSON.stringify(new data("get"))
-    console.log("send", json);
     connection.send(json);
 }
 
@@ -114,9 +116,9 @@ async function getData(key) {
 }
 
 const openTab = async (nId) => {
-    const url = await getData(nId);
+    const history = await getData("history");
     chrome.tabs.create({
-        url: url
+        url: history[nId]
     });
     chrome.notifications.clear(nId);
 }
@@ -125,7 +127,8 @@ chrome.notifications.onClicked.addListener(
     openTab,
 )
 
-const addValue = async (url) => {
+const addValue = async (key, url) => {
+    let history = await getData("history") || new Object();
 
     const option ={
         type: "basic",
@@ -134,14 +137,13 @@ const addValue = async (url) => {
         iconUrl: "icon128.png",
     };
     
-    const nId = new Date().getTime().toString();
 
     chrome.notifications.create(
-        nId,
+        key,
         option,
     );
-
-    await chrome.storage.local.set({ [nId]: url });
+    history[key] = url;
+    await chrome.storage.local.set({ ["history"]: history });
 }
 
 const pingLoop = async () => {
@@ -158,7 +160,9 @@ const pingLoop = async () => {
     })
 }
 
-connect();
+(async () => {
+    await connect();
+})();
 
 chrome.runtime.onStartup.addListener(
     (async () => {
@@ -167,6 +171,17 @@ chrome.runtime.onStartup.addListener(
 );
 
 chrome.contextMenus.onClicked.addListener((item, tab) => {
-    console.log(tab.url);
     tell(tab.url);
+});
+
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+    console.log(message);
+    if(message === "rename"){
+        const uid = await getData("uid");
+        rename(uid);
+    }else if(message === "get"){
+        get();
+    }else if(message === "reconnect"){
+        close();
+    }
 });

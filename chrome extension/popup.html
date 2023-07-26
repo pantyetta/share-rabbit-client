@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body{
+            margin: 20px;
+            min-width: 200px;
+            max-width: 320px;
+        }
+
+        header{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 26px;
+        }
+
+        header img{
+            height: 26px;
+        }
+
+        #history{
+            display: flex;
+            flex-direction: column;
+            margin-top: 1em;
+        }
+
+        #history div{
+            width: 100%;
+            overflow-wrap: break-word;
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: .5em;
+        }
+
+        #history div:hover{
+            background-color: #efefef;
+        }
+
+    </style>
+    <script async src="popup.js"></script>
+</head>
+<body>
+    <header>
+        <img src="icon48.png" alt="icon">
+        <p>share rabbit</p>
+    </header>
+    <div>
+        <input type="text" name="uid" id="uid" placeholder="uid"/>
+        <input type="text" name="url" id="url" placeholder="url"/>
+    </div>
+    <div id="history">
+    </div>
+</body>
+</html>
