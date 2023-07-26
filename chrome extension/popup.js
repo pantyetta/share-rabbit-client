@@ -3,8 +3,13 @@ const getHistory = async () =>{
     const result = await chrome.storage.local.get("history");
     for (const key in result["history"]) {
         const url = result["history"][key];
+        const img = document.createElement('img');
+        img.src = "https://www.google.com/s2/favicons?domain=" + url;
         const div = document.createElement('div');
-        div.textContent = url;
+        const p = document.createElement('p');
+        p.textContent = url;
+        div.appendChild(img);
+        div.appendChild(p);
         div.onclick = (async () => await chrome.tabs.create({url: url}));
         history_dom.appendChild(div); 
     }
