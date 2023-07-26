@@ -1,5 +1,5 @@
 chrome.runtime.onInstalled.addListener(async () =>{
-    await chrome.storage.local.set({ ["url"]: "ws://127.0.0.1" });
+    await chrome.storage.local.set({ ["url"]: "wss://rabbit.pantyetta.com" });
     await chrome.storage.local.set({ ["uid"]: "" });
     await chrome.storage.local.set({ ["history"]: new Object });
 
@@ -28,7 +28,7 @@ let connection = null;
 const connect = async () => {
     return new Promise(async (resolve, reject) => {
         try {
-            const url = await getData("url") || "ws://127.0.0.1";
+            const url = await getData("url") || "wss://rabbit.pantyetta.com" ;
             connection = new WebSocket(url);
             connection.binaryType = "arraybuffer";
             //通信が接続された場合
