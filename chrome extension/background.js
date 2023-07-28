@@ -26,56 +26,50 @@ const data = class{
 let connection = null;
 
 const connect = async () => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const url = await getData("url") || "wss://rabbit.pantyetta.com" ;
-            connection = new WebSocket(url);
-            connection.binaryType = "arraybuffer";
-            //通信が接続された場合
-            connection.onopen = async function(e) {
-                console.log("Connection Opne", e);
-                const name = await getData("uid");
-                if(name){
-                    rename(name);
+    try {
+        const url = await getData("url") || "wss://rabbit.pantyetta.com" ;
+        connection = new WebSocket(url);
+        connection.binaryType = "arraybuffer";
+        //通信が接続された場合
+        connection.onopen = async function(e) {
+            console.log("Connection Opne", e);
+            const name = await getData("uid");
+            if(name){
+                rename(name);
+            }
+        };
+
+        //エラーが発生した場合
+        connection.onerror = function(e) {
+            console.error(e);
+        };
+
+        //メッセージを受け取った場合
+        connection.onmessage = async function(e) {
+            const json = JSON.parse(e.data);
+            console.log("receive", json)
+            if(json.type == "tell"){
+                await addValue(new Date().getMilliseconds.toString() ,json.msg);
+                await chrome.runtime.sendMessage("update");
+            }else if(json.type == "get"){
+                for (const key in json.history) {
+                    await addValue(key, json.history[key]);
                 }
-                resolve();
-                await pingLoop();
-            };
-    
-            //エラーが発生した場合
-            connection.onerror = function(e) {
-                console.error(e);
-                reject();
-            };
-    
-            //メッセージを受け取った場合
-            connection.onmessage = async function(e) {
-                const json = JSON.parse(e.data);
-                console.log("receive", json)
-                if(json.type == "tell"){
-                    await addValue(new Date().getMilliseconds.toString() ,json.msg);
-                    await chrome.runtime.sendMessage("update");
-                }else if(json.type == "get"){
-                    for (const key in json.history) {
-                        await addValue(key, json.history[key]);
-                    }
-                    await chrome.runtime.sendMessage("update");
-                }
-            };
-    
-            //通信が切断された場合
-            connection.onclose = function(e) {
-                console.error("Connection close", e);
-                connection = null;
-                setTimeout(async () =>{
-                    await connect();
-                }, 10 * 1000)
-            };
-        } catch (error) {
-            console.error(error);
-            reject();
-        }
-    });
+                await chrome.runtime.sendMessage("update");
+            }
+        };
+
+        //通信が切断された場合
+        connection.onclose = function(e) {
+            console.error("Connection close", e);
+            connection = null;
+            setTimeout(async () =>{
+                await connect();
+            }, 10 * 1000)
+        };
+    } catch (error) {
+        console.error(error);
+    }
 }
 
 const close = () => {
@@ -149,19 +143,18 @@ const addValue = async (key, url) => {
 const pingLoop = async () => {
     return new Promise((resolve, reject) =>{
         setTimeout(async () => {
-            if(connection == null){
-                reject();
-            }else{
+            if(connection != null){
                 ping();
-                resolve();
-                await pingLoop();
             }
+            await pingLoop();
+            resolve();
         }, 15 * 1000);
     })
 }
 
 (async () => {
     await connect();
+    await pingLoop();
 })();
 
 chrome.runtime.onStartup.addListener(

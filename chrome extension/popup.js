@@ -1,3 +1,8 @@
+let global = {
+    uid: "",
+    url: ""
+}
+
 const getHistory = async () =>{
     const history_dom = document.getElementById("history");
     const result = await chrome.storage.local.get("history");
@@ -16,7 +21,11 @@ const getHistory = async () =>{
 }
 
 const onBlurHandle = async (e, key) => {
-    await chrome.storage.local.set({[key]: e.target.value});
+    if(global[key] === e.target.value){
+        return;
+    }
+    global[key] = e.target.value;
+    await chrome.storage.local.set({[key]: global[key]});
     if(key === "uid"){
         await chrome.runtime.sendMessage("rename");
     }else if(key === "url"){
@@ -28,19 +37,20 @@ const onBlurHandle = async (e, key) => {
     const uid_dom = document.getElementById("uid");
     uid_dom.addEventListener("blur", (e) => onBlurHandle(e, "uid"));
 
-    const result = await chrome.storage.local.get("uid");
-    uid_dom.value = result["uid"];
+    const uid_result = await chrome.storage.local.get("uid");
+    global.uid = uid_result["uid"];
+    uid_dom.value = global.uid;
     
-    if(result["uid"]){
+    if(uid_result["uid"]){
         await chrome.runtime.sendMessage("get");
     }
 
     const url_dom = document.getElementById("url");
     url_dom.addEventListener("blur", (e) => onBlurHandle(e, "url"));
 
-    const url = await chrome.storage.local.get("url");
-    console.log(url)
-    url_dom.value = url["url"];
+    const url_result = await chrome.storage.local.get("url");
+    global.url = url_result.url
+    url_dom.value = global.url;
 })();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
