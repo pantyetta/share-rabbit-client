@@ -117,6 +117,14 @@ async function getData(key) {
 
 const openTab = async (nId) => {
     const history = await getData("history");
+
+    const Allwindow = await chrome.windows.getAll({
+        windowTypes: ['normal']
+    });
+    if(!Allwindow){
+        await chrome.windows.create();
+    }
+
     chrome.tabs.create({
         url: history[nId]
     });
@@ -174,7 +182,6 @@ chrome.contextMenus.onClicked.addListener((item, tab) => {
 });
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-    console.log(message);
     if(message === "rename"){
         const uid = await getData("uid");
         rename(uid);
