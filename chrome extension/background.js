@@ -49,7 +49,7 @@ const connect = async () => {
             const json = JSON.parse(e.data);
             console.log("receive", json)
             if(json.type == "tell"){
-                await addValue(new Date().getMilliseconds.toString() ,json.msg);
+                await addValue(new Date().getTime().toString() ,json.msg);
                 try {
                     await chrome.runtime.sendMessage("update");
                 } catch (error) {
