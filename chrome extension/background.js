@@ -50,12 +50,18 @@ const connect = async () => {
             console.log("receive", json)
             if(json.type == "tell"){
                 await addValue(new Date().getMilliseconds.toString() ,json.msg);
-                await chrome.runtime.sendMessage("update");
+                try {
+                    await chrome.runtime.sendMessage("update");
+                } catch (error) {
+                }
             }else if(json.type == "get"){
                 for (const key in json.history) {
                     await addValue(key, json.history[key]);
                 }
-                await chrome.runtime.sendMessage("update");
+                try {
+                    await chrome.runtime.sendMessage("update");
+                } catch (error) {
+                }
             }
         };
 
