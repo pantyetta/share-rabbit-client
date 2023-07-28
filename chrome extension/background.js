@@ -108,10 +108,9 @@ const get = () =>{
 }
 
 async function getData(key) {
-    return new Promise((resolve) => {
-      chrome.storage.local.get(key, (result) => {
-        resolve(result[key]);
-      });
+    return new Promise(async (resolve) => {
+      const result = await chrome.storage.local.get(key);
+      resolve(result[key]);
     });
 }
 
@@ -121,8 +120,10 @@ const openTab = async (nId) => {
     const Allwindow = await chrome.windows.getAll({
         windowTypes: ['normal']
     });
-    if(!Allwindow){
+    console.log(Allwindow);
+    if(!Allwindow.length){
         await chrome.windows.create();
+        console.log("create");
     }
 
     chrome.tabs.create({
