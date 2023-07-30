@@ -4,12 +4,18 @@ chrome.runtime.onInstalled.addListener(async () =>{
     await chrome.storage.local.set({ ["history"]: new Object });
 
     await chrome.contextMenus.create({
-        id: "share-rabiit-client",
+        id: "share-rabiit-client-page",
         title: "共有する",
         type: 'normal',
-        contexts: ['all']
+        contexts: ['page']
       });
 
+      await chrome.contextMenus.create({
+        id: "share-rabiit-client-link",
+        title: "linkを共有する",
+        type: 'normal',
+        contexts: ['link']
+      });
 });
 
 const data = class{
@@ -179,7 +185,11 @@ chrome.runtime.onStartup.addListener(
 );
 
 chrome.contextMenus.onClicked.addListener((item, tab) => {
-    tell(tab.url);
+    if(item.menuItemId === "share-rabiit-client-page"){
+        tell(tab.url);
+    }else if(item.menuItemId === "share-rabiit-client-link"){
+        tell(item.linkUrl);
+    }
 });
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
