@@ -73,7 +73,7 @@ const connect = async () => {
 
         //通信が切断された場合
         connection.onclose = function(e) {
-            console.error("Connection close", e);
+            console.log("Connection close", e);
             connection = null;
             setTimeout(async () =>{
                 await connect();
