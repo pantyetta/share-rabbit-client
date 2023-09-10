@@ -6,6 +6,9 @@ let global = {
 const getHistory = async () =>{
     const history_dom = document.getElementById("history");
     const result = await chrome.storage.local.get("history");
+    while(history_dom.firstChild){
+        history_dom.removeChild(history_dom.firstChild)
+    }
     for (const key in result["history"]) {
         const url = result["history"][key];
         const img = document.createElement('img');
@@ -51,6 +54,12 @@ const onBlurHandle = async (e, key) => {
     const url_result = await chrome.storage.local.get("url");
     global.url = url_result.url
     url_dom.value = global.url;
+
+    const clear_dom = document.getElementById("clear-button");
+    clear_dom.addEventListener('click', async (e) => {
+        await chrome.storage.local.set({ ["history"]: new Object()});
+        getHistory();
+    });
 })();
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
