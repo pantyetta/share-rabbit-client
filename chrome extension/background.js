@@ -1,7 +1,16 @@
 chrome.runtime.onInstalled.addListener(async () =>{
-    await chrome.storage.local.set({ ["url"]: "wss://rabbit.pantyetta.com" });
-    await chrome.storage.local.set({ ["uid"]: "" });
-    await chrome.storage.local.set({ ["history"]: new Object });
+
+    console.log("install share rabbit")
+    if(!await getData("url")){
+        await chrome.storage.local.set({ ["url"]: "wss://rabbit.pantyetta.com" });
+    }
+    if(!await getData("uid")){
+        await chrome.storage.local.set({ ["uid"]: "" });
+    }
+
+    if(!await getData("history")){
+        await chrome.storage.local.set({ ["history"]: new Object });
+    }
 
     await chrome.contextMenus.create({
         id: "share-rabiit-client-page",
@@ -16,7 +25,19 @@ chrome.runtime.onInstalled.addListener(async () =>{
         type: 'normal',
         contexts: ['link']
       });
+
+    await connect();
+    await pingLoop();
 });
+
+chrome.runtime.onStartup.addListener(
+    (async () => {
+        if(connection != null) return;
+        await connect();
+        await pingLoop();
+    })
+);
+
 
 const data = class{
     type = "";
@@ -55,7 +76,9 @@ const connect = async () => {
             const json = JSON.parse(e.data);
             console.log("receive", json)
             if(json.type == "tell"){
-                await addValue(new Date().getTime().toString() ,json.msg);
+                for (const key in json.tell) {
+                    await addValue(key, json.tell[key]);
+                }
                 try {
                     await chrome.runtime.sendMessage("update");
                 } catch (error) {
@@ -89,26 +112,31 @@ const close = () => {
 }
 
 const ping = () =>{
+    if(connection == null)  return;
     const json = JSON.stringify(new data("ping", "ping"))
     connection.send(json);
 }
 
 const echo = (msg) =>{
+    if(connection == null)  return;
     const json = JSON.stringify(new data("echo", msg))
     connection.send(json);
 }
 
 const tell = (msg) =>{
+    if(connection == null)  return;
     const json = JSON.stringify(new data("tell", msg))
     connection.send(json);
 }
 
 const rename = (name) =>{
+    if(connection == null)  return;
     const json = JSON.stringify(new data("rename", name))
     connection.send(json);
 }
 
 const get = () =>{
+    if(connection == null)  return;
     const json = JSON.stringify(new data("get"))
     connection.send(json);
 }
@@ -126,7 +154,6 @@ const openTab = async (nId) => {
     const Allwindow = await chrome.windows.getAll({
         windowTypes: ['normal']
     });
-    console.log(Allwindow);
     if(!Allwindow.length){
         await chrome.windows.create();
         console.log("create");
@@ -169,20 +196,9 @@ const pingLoop = async () => {
             }
             await pingLoop();
             resolve();
-        }, 15 * 1000);
+        }, 5 * 1000);
     })
 }
-
-(async () => {
-    await connect();
-    await pingLoop();
-})();
-
-chrome.runtime.onStartup.addListener(
-    (async () => {
-        await connect();
-    })
-);
 
 chrome.contextMenus.onClicked.addListener((item, tab) => {
     if(item.menuItemId === "share-rabiit-client-page"){
