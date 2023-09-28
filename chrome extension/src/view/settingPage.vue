@@ -12,7 +12,7 @@
       />
     </svg>
     <h1 class="mt-4 text-neutral-400 uppercase">setting</h1>
-    <div class="flex flex-col items-start gap-4">
+    <div class="flex flex-col items-start gap-4 relative">
       <div className="form-control w-full max-w-xs">
         <label className="label">
           <span className="label-text font-bold">UID</span>
@@ -35,9 +35,13 @@
           v-model="setting.url"
         />
       </div>
+      <div>
+        <p>DarkMode</p>
+        <input type="checkbox" class="toggle" />
+      </div>
       <button class="btn btn-warning">Reset</button>
       <div
-        class="relative w-[100vw] border-t border-t-[#DDDDDD] left-[-1.25rem]"
+        class="relative w-[calc(100%+2.5rem)] border-t border-t-[#DDDDDD] left-[-1.25rem]"
       ></div>
     </div>
   </div>
@@ -56,7 +60,11 @@ export default defineComponent({
       router.back();
     };
 
-    const setting = ref({ uid: "uid default", url: "url default" });
+    const setting = ref({
+      uid: "uid default",
+      url: "url default",
+      darkmode: false,
+    });
 
     return {
       goBack,

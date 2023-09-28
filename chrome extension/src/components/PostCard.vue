@@ -1,6 +1,6 @@
 <template>
   <a
-    class="join join-vertical w-full p-5 border-[#DDDDDD] border drop-shadow-sm group hover:border-[#86DEC2] focus-visible:border-[#86DEC2]"
+    class="join join-vertical w-full p-5 border-[#DDDDDD] border drop-shadow-sm group hover:border-accent focus-visible:border-accent"
     :href="post.url"
     target="_blank"
   >
@@ -9,7 +9,7 @@
       <p class="ml-2">{{ post.time }}</p>
     </dvi>
     <p
-      class="text-lg text-[#333333] max-h-14 text-ellipsis overflow-hidden group-hover:underline group-focus-visible:underline"
+      class="text-lg text-neutral max-h-14 text-ellipsis overflow-hidden group-hover:underline group-focus-visible:underline"
     >
       {{ post.url }}
     </p>
