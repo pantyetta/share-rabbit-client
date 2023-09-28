@@ -6,9 +6,4 @@ export const useSettings = defineStore("settings", {
     url: "",
     darkMode: false,
   }),
-  actions: {
-    toggleDarkMode() {
-      this.darkMode = !this.darkMode;
-    },
-  },
 });
