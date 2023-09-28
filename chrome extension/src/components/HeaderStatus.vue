@@ -6,7 +6,7 @@
   >
     <div
       v-show="!barStatus"
-      class="tracking-widest text-base-100 text-[.5rem] flex gap-1 items-center"
+      class="tracking-widest text-[.5rem] flex gap-1 items-center text-[#fdfdfd]"
     >
       <span>Reload Connection</span
       ><svg
@@ -24,11 +24,13 @@
 </template>
 
 <script lang="ts">
+import { useSettings } from "@/stores/settings";
 import { defineComponent, ref } from "vue";
 export default defineComponent({
   name: "HeaderStatus",
   setup() {
     const barStatus = ref(false);
+    const settings = useSettings();
 
     const barColor = () => {
       return barStatus.value ? "bg-success" : "bg-error";
@@ -42,6 +44,7 @@ export default defineComponent({
       barColor,
       barStatus,
       onClick,
+      settings,
     };
   },
 });

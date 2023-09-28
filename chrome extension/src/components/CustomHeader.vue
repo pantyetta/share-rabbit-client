@@ -4,7 +4,15 @@
   >
     <HeaderStatus />
     <div class="join items-center" @click="goHome()">
-      <img class="w-8" src="../assets/icon48.png" alt="icon" />
+      <img
+        class="w-8"
+        :src="
+          require(settings.darkMode
+            ? '../assets/logo-white.svg'
+            : '../assets/logo-black.svg')
+        "
+        alt="icon"
+      />
       <p class="ml-2">Share Rabbit Client</p>
     </div>
     <svg
@@ -12,6 +20,7 @@
       height="1em"
       viewBox="0 0 512 512"
       @click="goSetting()"
+      :class="settings.darkMode ? 'fill-[#c1c1c1]' : 'fill-[#3a3a3a]'"
     >
       <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
       <path
@@ -25,6 +34,7 @@
 import { defineComponent } from "vue";
 import HeaderStatus from "./HeaderStatus.vue";
 import { useRouter } from "vue-router";
+import { useSettings } from "@/stores/settings";
 
 export default defineComponent({
   name: "CustomHeder",
@@ -33,6 +43,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    const settings = useSettings();
 
     const goHome = () => {
       router.push("/");
@@ -45,9 +56,8 @@ export default defineComponent({
     return {
       goHome,
       goSetting,
+      settings,
     };
   },
 });
 </script>
-
-<style></style>

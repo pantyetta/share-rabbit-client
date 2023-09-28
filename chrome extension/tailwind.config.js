@@ -15,15 +15,26 @@ module.exports = {
   plugins: [require("daisyui")],
   daisyui: {
     themes: [
-      "light",
-      "dark",
       {
-        rabbitTheme: {
+        "white-rabbit": {
           primary: "#A898FF",
           secondary: "#FF83BE",
           accent: "#8598FF",
           neutral: "#3d3d4d",
           "base-100": "#FDFDFD",
+          info: "#A4FFA4",
+          success: "#86DEC2",
+          warning: "#FFBE83",
+          error: "#FF9385",
+        },
+      },
+      {
+        "dark-rabbit": {
+          primary: "#A898FF",
+          secondary: "#FF83BE",
+          accent: "#8598FF",
+          neutral: "#3d3d3d",
+          "base-100": "#1f1f1f",
           info: "#A4FFA4",
           success: "#86DEC2",
           warning: "#FFBE83",

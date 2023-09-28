@@ -9,7 +9,7 @@
       <p class="ml-2">{{ post.time }}</p>
     </dvi>
     <p
-      class="text-lg text-neutral max-h-14 text-ellipsis overflow-hidden group-hover:underline group-focus-visible:underline"
+      class="text-lg max-h-14 text-ellipsis overflow-hidden group-hover:underline group-focus-visible:underline"
     >
       {{ post.url }}
     </p>

@@ -5,6 +5,7 @@
       height="1em"
       viewBox="0 0 448 512"
       @click="goBack()"
+      :class="settings.darkMode ? 'fill-[#c1c1c1]' : 'fill-[#3a3a3a]'"
     >
       <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
       <path
@@ -21,7 +22,7 @@
           type="text"
           placeholder="Type here"
           className="input input-bordered w-full max-w-xs"
-          v-model="setting.uid"
+          v-model="settings.uid"
         />
       </div>
       <div className="form-control w-full max-w-xs">
@@ -32,14 +33,14 @@
           type="text"
           placeholder="Type here"
           className="input input-bordered w-full max-w-xs"
-          v-model="setting.url"
+          v-model="settings.url"
         />
       </div>
       <div>
         <p>DarkMode</p>
-        <input type="checkbox" class="toggle" />
+        <input type="checkbox" class="toggle" v-model="settings.darkMode" />
       </div>
-      <button class="btn btn-warning">Reset</button>
+      <button class="btn btn-warning" @click="settings.$reset()">Reset</button>
       <div
         class="relative w-[calc(100%+2.5rem)] border-t border-t-[#DDDDDD] left-[-1.25rem]"
       ></div>
@@ -48,27 +49,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
+import { useSettings } from "@/stores/settings";
 
 export default defineComponent({
   name: "settingPage",
   setup() {
     const router = useRouter();
+    const settings = useSettings();
 
     const goBack = () => {
       router.back();
     };
 
-    const setting = ref({
-      uid: "uid default",
-      url: "url default",
-      darkmode: false,
-    });
-
     return {
       goBack,
-      setting,
+      settings,
     };
   },
 });
