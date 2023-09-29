@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import PostCard from "@/components/PostCard.vue";
 import { useHistory } from "@/stores/history";
 

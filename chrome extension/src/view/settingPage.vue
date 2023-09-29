@@ -40,7 +40,25 @@
         <p>DarkMode</p>
         <input type="checkbox" class="toggle" v-model="settings.darkMode" />
       </div>
-      <button class="btn btn-warning" @click="settings.$reset()">Reset</button>
+      <button class="btn btn-warning" onclick="my_modal_2.showModal()">
+        Reset
+      </button>
+      <dialog id="my_modal_2" class="modal">
+        <div class="modal-box">
+          <h3 class="font-bold text-lg">Warning!</h3>
+          <p class="py-4">Clear all settings !!</p>
+          <div class="modal-action">
+            <form method="dialog">
+              <button class="btn btn-warning" @click="settings.$reset">
+                understand
+              </button>
+            </form>
+          </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+          <button>Close</button>
+        </form>
+      </dialog>
       <div
         class="relative w-[calc(100%+2.5rem)] border-t border-t-[#DDDDDD] left-[-1.25rem]"
       ></div>
