@@ -3,7 +3,7 @@
     class="border-b border-b-[#DDDDDD] flex justify-between items-center px-5 pb-1 pt-3 w-full fixed top-0 left-0 drop-shadow-sm h-16"
   >
     <HeaderStatus />
-    <div class="join items-center" @click="goHome()">
+    <div class="join items-center cursor-pointer" @click="goHome()">
       <img
         class="w-8"
         :src="
@@ -21,6 +21,7 @@
       viewBox="0 0 512 512"
       @click="goSetting()"
       :class="settings.darkMode ? 'fill-[#c1c1c1]' : 'fill-[#3a3a3a]'"
+      class="cursor-pointer"
     >
       <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
       <path
