@@ -6,6 +6,7 @@
       viewBox="0 0 448 512"
       @click="goBack()"
       :class="settings.darkMode ? 'fill-[#c1c1c1]' : 'fill-[#3a3a3a]'"
+      class="cursor-pointer"
     >
       <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
       <path
@@ -27,7 +28,7 @@
       </div>
       <div className="form-control w-full max-w-xs">
         <label className="label">
-          <span className="label-text font-bold">UID</span>
+          <span className="label-text font-bold">URL</span>
         </label>
         <input
           type="text"
@@ -37,28 +38,13 @@
         />
       </div>
       <div>
-        <p>DarkMode</p>
+        <p class="pb-2 pt-2">DarkMode</p>
         <input type="checkbox" class="toggle" v-model="settings.darkMode" />
       </div>
-      <button class="btn btn-warning" onclick="my_modal_2.showModal()">
-        Reset
-      </button>
-      <dialog id="my_modal_2" class="modal">
-        <div class="modal-box">
-          <h3 class="font-bold text-lg">Warning!</h3>
-          <p class="py-4">Clear all settings !!</p>
-          <div class="modal-action">
-            <form method="dialog">
-              <button class="btn btn-warning" @click="settings.$reset">
-                understand
-              </button>
-            </form>
-          </div>
-        </div>
-        <form method="dialog" class="modal-backdrop">
-          <button>Close</button>
-        </form>
-      </dialog>
+      <div class="pb-2 pt-2">
+        <button class="btn btn-warning" @click="isModal = true">Reset</button>
+        <ErrModal v-show="isModal" @click-submit="reset()" />
+      </div>
       <div
         class="relative w-[calc(100%+2.5rem)] border-t border-t-[#DDDDDD] left-[-1.25rem]"
       ></div>
@@ -67,23 +53,40 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useSettings } from "@/stores/settings";
+import { useHistory } from "@/stores/history";
+import ErrModal from "@/components/ErrModal.vue";
 
 export default defineComponent({
   name: "settingPage",
+  components: {
+    ErrModal,
+  },
   setup() {
     const router = useRouter();
     const settings = useSettings();
+    const history = useHistory();
+
+    const isModal = ref(false);
 
     const goBack = () => {
       router.back();
     };
 
+    const reset = () => {
+      isModal.value = false;
+      settings.$reset();
+      history.$reset();
+    };
+
     return {
       goBack,
       settings,
+      history,
+      isModal,
+      reset,
     };
   },
 });
