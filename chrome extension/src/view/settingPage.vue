@@ -38,16 +38,27 @@
         />
       </div>
       <div>
-        <p class="pb-2 pt-2">DarkMode</p>
+        <p class="pb-2 pt-2 font-bold">DarkMode</p>
         <input type="checkbox" class="toggle" v-model="settings.darkMode" />
       </div>
       <div class="pb-2 pt-2">
         <button class="btn btn-warning" @click="isModal = true">Reset</button>
-        <ErrModal v-show="isModal" @click-submit="reset()" />
+        <ErrModal
+          v-show="isModal"
+          @click-submit="reset()"
+          @on-cancel="cancel()"
+        />
       </div>
       <div
         class="relative w-[calc(100%+2.5rem)] border-t border-t-[#DDDDDD] left-[-1.25rem]"
       ></div>
+    </div>
+    <div class="flex flex-col items-start gap-4 relative">
+      <h1 class="mt-4 text-neutral-400 uppercase">debug</h1>
+      <div>
+        <p class="pb-2 pt-2 font-bold">dummy</p>
+        <button class="btn" @click="history.testAdd()">add</button>
+      </div>
     </div>
   </div>
 </template>
@@ -81,12 +92,17 @@ export default defineComponent({
       history.$reset();
     };
 
+    const cancel = () => {
+      isModal.value = false;
+    };
+
     return {
       goBack,
       settings,
       history,
       isModal,
       reset,
+      cancel,
     };
   },
 });

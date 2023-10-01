@@ -19,5 +19,9 @@ export const useHistory = defineStore("history", {
         return item.id != id;
       });
     },
+    testAdd() {
+      const key = Math.random().toString(32).substring(2);
+      this.add(key, `https://example.org/${key}`, Date().toString());
+    },
   },
 });
