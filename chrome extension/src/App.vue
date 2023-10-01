@@ -27,19 +27,22 @@ export default defineComponent({
       }
     );
 
+    const isSysDark = matchMedia("(prefers-color-scheme: dark)").matches;
+    if (isSysDark) setting.darkMode = true;
+
     const data = [
       {
-        id: "eeee",
+        id: "hhh",
         url: "https://www.amazon.co.jp/gp/buyagain/ref=pd_gwd_bag_pd_gw_rp_2?ie=UTF8&ats=eyJleHBsaWNpdENhbmRpZGF0ZXMiOiJCMDA0T1E1U0dDIiwiY3VzdG9tZXJJZCI6IkFJTFdHMEE2Q01UN1UifQ%3D%3D&pd_rd_w=YeC5S&content-id=amzn1.sym.013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_p=013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_r=0JFY24JVTHQ89VC5148T&pd_rd_wg=Hltp3&pd_rd_r=caa7a710-cbae-47f2-9fc3-b86041e0f3ff",
         time: "09/02 16:49",
       },
       {
-        id: "eeee",
+        id: "ggg",
         url: "https://www.amazon.co.jp/gp/buyagain/ref=pd_gwd_bag_pd_gw_rp_2?ie=UTF8&ats=eyJleHBsaWNpdENhbmRpZGF0ZXMiOiJCMDA0T1E1U0dDIiwiY3VzdG9tZXJJZCI6IkFJTFdHMEE2Q01UN1UifQ%3D%3D&pd_rd_w=YeC5S&content-id=amzn1.sym.013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_p=013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_r=0JFY24JVTHQ89VC5148T&pd_rd_wg=Hltp3&pd_rd_r=caa7a710-cbae-47f2-9fc3-b86041e0f3ff",
         time: "09/02 16:49",
       },
       {
-        id: "eeee",
+        id: "fff",
         url: "https://www.amazon.co.jp/gp/buyagain/ref=pd_gwd_bag_pd_gw_rp_2?ie=UTF8&ats=eyJleHBsaWNpdENhbmRpZGF0ZXMiOiJCMDA0T1E1U0dDIiwiY3VzdG9tZXJJZCI6IkFJTFdHMEE2Q01UN1UifQ%3D%3D&pd_rd_w=YeC5S&content-id=amzn1.sym.013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_p=013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_r=0JFY24JVTHQ89VC5148T&pd_rd_wg=Hltp3&pd_rd_r=caa7a710-cbae-47f2-9fc3-b86041e0f3ff",
         time: "09/02 16:49",
       },
@@ -64,6 +67,7 @@ export default defineComponent({
 
     return {
       setting,
+      isSysDark,
     };
   },
 });
