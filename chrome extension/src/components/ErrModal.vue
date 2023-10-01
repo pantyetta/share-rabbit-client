@@ -8,13 +8,14 @@
     <div
       class="fixed inset-0 bg-[#F9FAFB] bg-opacity-75 transition-opacity"
     ></div>
-
     <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
       <div
-        class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"
+        class="flex min-h-full items-center justify-center p-4 text-center sm:items-center sm:p-0 z-0"
+        @click="$emit('onCancel')"
       >
         <div
-          class="relative transform overflow-hidden rounded-lg text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg bg-base-100"
+          class="relative transform overflow-hidden rounded-lg text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg bg-base-100 z-10"
+          @click.stop
         >
           <div class="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
             <div class="sm:flex sm:items-start">
@@ -22,7 +23,7 @@
                 class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-warning sm:mx-0 sm:h-10 sm:w-10"
               >
                 <svg
-                  class="h-6 w-6 text-red-600"
+                  class="h-6 w-6 text-red-600 text-[#000]"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
@@ -70,10 +71,9 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "ErrModal",
-  emits: ["clickSubmit"],
+  emits: ["clickSubmit", "onCancel"],
   setup(props, { emit }) {
     const settings = useSettings();
-    emit("clickSubmit");
 
     return {
       settings,
