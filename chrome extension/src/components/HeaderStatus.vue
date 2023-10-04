@@ -1,11 +1,11 @@
 <template>
   <div
     class="absolute top-0 left-0 h-3 w-full text-[.25rem] flex items-center justify-center"
-    :class="barColor()"
+    :class="settings.isStatus ? 'bg-success' : 'bg-error'"
     @click="onClick()"
   >
     <div
-      v-show="!barStatus"
+      v-show="!settings.isStatus"
       class="tracking-widest text-[.5rem] flex gap-1 items-center text-[#fdfdfd]"
     >
       <span>Reload Connection</span
@@ -25,24 +25,17 @@
 
 <script lang="ts">
 import { useSettings } from "@/stores/settings";
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 export default defineComponent({
   name: "HeaderStatus",
   setup() {
-    const barStatus = ref(false);
     const settings = useSettings();
 
-    const barColor = () => {
-      return barStatus.value ? "bg-success" : "bg-error";
-    };
-
     const onClick = () => {
-      barStatus.value = !barStatus.value;
+      settings.isStatus = !settings.isStatus;
     };
 
     return {
-      barColor,
-      barStatus,
       onClick,
       settings,
     };

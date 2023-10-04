@@ -4,7 +4,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watch } from "vue";
+import { defineComponent, onMounted, watch } from "vue";
 import CustomHeader from "./components/CustomHeader.vue";
 import { useSettings } from "@/stores/settings";
 import { useHistory } from "./stores/history";
@@ -15,20 +15,8 @@ export default defineComponent({
     CustomHeader,
   },
   setup() {
-    const setting = useSettings();
+    const settings = useSettings();
     const history = useHistory();
-
-    watch(
-      () => setting.darkMode,
-      (value) => {
-        const $html = document.querySelector("html");
-        if ($html == null) return;
-        $html.dataset.theme = value ? "dark-rabbit" : "white-rabbit";
-      }
-    );
-
-    const isSysDark = matchMedia("(prefers-color-scheme: dark)").matches;
-    if (isSysDark) setting.darkMode = true;
 
     const data = [
       {
@@ -61,14 +49,23 @@ export default defineComponent({
       { id: "a", url: "https://google.com", time: "09/12 15:20" },
     ];
 
-    data.forEach((d) => {
-      history.add(d.id, d.url, d.time);
+    onMounted(async () => {
+      await settings.init();
     });
 
-    return {
-      setting,
-      isSysDark,
-    };
+    watch(
+      () => settings.darkMode,
+      (value) => {
+        const $html = document.querySelector("html");
+        if ($html == null) return;
+        $html.dataset.theme = value ? "dark-rabbit" : "white-rabbit";
+      }
+    );
+
+    watch(settings, (settings) => {
+      settings.save();
+    });
+
   },
 });
 </script>

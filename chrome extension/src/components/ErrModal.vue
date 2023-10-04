@@ -72,7 +72,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "ErrModal",
   emits: ["clickSubmit", "onCancel"],
-  setup(props, { emit }) {
+  setup() {
     const settings = useSettings();
 
     return {
