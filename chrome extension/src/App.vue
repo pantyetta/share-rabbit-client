@@ -18,39 +18,35 @@ export default defineComponent({
     const settings = useSettings();
     const history = useHistory();
 
-    const data = [
+    const dtemp = [
       {
-        id: "hhh",
+        id: "10:pancho:1696382088",
         url: "https://www.amazon.co.jp/gp/buyagain/ref=pd_gwd_bag_pd_gw_rp_2?ie=UTF8&ats=eyJleHBsaWNpdENhbmRpZGF0ZXMiOiJCMDA0T1E1U0dDIiwiY3VzdG9tZXJJZCI6IkFJTFdHMEE2Q01UN1UifQ%3D%3D&pd_rd_w=YeC5S&content-id=amzn1.sym.013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_p=013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_r=0JFY24JVTHQ89VC5148T&pd_rd_wg=Hltp3&pd_rd_r=caa7a710-cbae-47f2-9fc3-b86041e0f3ff",
-        time: "09/02 16:49",
       },
       {
-        id: "ggg",
+        id: "20:pancho:1696382030",
         url: "https://www.amazon.co.jp/gp/buyagain/ref=pd_gwd_bag_pd_gw_rp_2?ie=UTF8&ats=eyJleHBsaWNpdENhbmRpZGF0ZXMiOiJCMDA0T1E1U0dDIiwiY3VzdG9tZXJJZCI6IkFJTFdHMEE2Q01UN1UifQ%3D%3D&pd_rd_w=YeC5S&content-id=amzn1.sym.013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_p=013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_r=0JFY24JVTHQ89VC5148T&pd_rd_wg=Hltp3&pd_rd_r=caa7a710-cbae-47f2-9fc3-b86041e0f3ff",
-        time: "09/02 16:49",
       },
       {
-        id: "fff",
+        id: "10:pancho:1696380088",
         url: "https://www.amazon.co.jp/gp/buyagain/ref=pd_gwd_bag_pd_gw_rp_2?ie=UTF8&ats=eyJleHBsaWNpdENhbmRpZGF0ZXMiOiJCMDA0T1E1U0dDIiwiY3VzdG9tZXJJZCI6IkFJTFdHMEE2Q01UN1UifQ%3D%3D&pd_rd_w=YeC5S&content-id=amzn1.sym.013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_p=013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_r=0JFY24JVTHQ89VC5148T&pd_rd_wg=Hltp3&pd_rd_r=caa7a710-cbae-47f2-9fc3-b86041e0f3ff",
-        time: "09/02 16:49",
       },
       {
-        id: "eeee",
+        id: "10:pancho:1696372088",
         url: "https://www.amazon.co.jp/gp/buyagain/ref=pd_gwd_bag_pd_gw_rp_2?ie=UTF8&ats=eyJleHBsaWNpdENhbmRpZGF0ZXMiOiJCMDA0T1E1U0dDIiwiY3VzdG9tZXJJZCI6IkFJTFdHMEE2Q01UN1UifQ%3D%3D&pd_rd_w=YeC5S&content-id=amzn1.sym.013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_p=013262cb-6006-4f58-84bc-7f4eec8e9500&pf_rd_r=0JFY24JVTHQ89VC5148T&pd_rd_wg=Hltp3&pd_rd_r=caa7a710-cbae-47f2-9fc3-b86041e0f3ff",
-        time: "09/02 16:49",
       },
       {
-        id: "bddd",
+        id: "10:pancho:1698370000",
         url: "https://www.youtube.com/watch?v=TD-LX0Y5Z6E",
-        time: "09/16 12:01",
       },
-      { id: "cc", url: "https://google.com", time: "09/15 15:20" },
-      { id: "bbb", url: "https://youtube.com", time: "09/14 06:52" },
-      { id: "a", url: "https://google.com", time: "09/12 15:20" },
+      { id: "10:pancho:1692372088", url: "https://google.com" },
+      { id: "10:pancho:1696372088", url: "https://youtube.com" },
+      { id: "10:pancho:1694372088", url: "https://google.com" },
     ];
 
     onMounted(async () => {
       await settings.init();
+      await history.init();
     });
 
     watch(
@@ -66,6 +62,9 @@ export default defineComponent({
       settings.save();
     });
 
+    watch(history, (history) => {
+      history.save();
+    });
   },
 });
 </script>
