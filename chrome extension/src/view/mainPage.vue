@@ -4,7 +4,7 @@
       <button
         class="btn btn-sm mb-2 ml-auto flex"
         @click="isModal = true"
-        v-show="history.history.length > 0"
+        v-show="history.history.length > 1"
       >
         <span>Clear ALl</span
         ><svg
@@ -28,7 +28,7 @@
         @click-submit="reset()"
       />
     </div>
-    <div class="flex flex-col-reverse gap-2">
+    <div class="flex flex-col gap-2">
       <PostCard
         v-for="data in history.history"
         :key="data.id"

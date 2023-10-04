@@ -13,7 +13,7 @@ export const useHistory = defineStore("history", {
   }),
   actions: {
     add(id: string, url: string) {
-      this.history.push({ id, url });
+      this.history.unshift({ id, url });
     },
     remove(id: string) {
       this.history = this.history.filter((item) => {
