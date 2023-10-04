@@ -17,9 +17,9 @@ export const useSettings = defineStore("settings", {
     isStatus: false,
   }),
   actions: {
-    save() {
+    async save() {
       isExtension
-        ? chrome.storage.local.set({
+        ? await chrome.storage.local.set({
             ["settings"]: {
               uid: this.uid,
               url: this.url,
@@ -43,9 +43,10 @@ export const useSettings = defineStore("settings", {
             "settings"
           ] as SETTINGSTYPE)
         : (JSON.parse(
-            localStorage.getItem("settings") ||
-              '{ uid: "", url: "", darkmode: false, isStatus: false }'
+            localStorage.getItem("settings") || "{}"
           ) as SETTINGSTYPE);
+      console.log(settings);
+      if (!settings || !Object.keys(settings).length) return;
       this.uid = settings.uid;
       this.url = settings.url;
       this.darkMode = settings.darkmode;
