@@ -29,6 +29,9 @@
             enabled: false
         });
 
+        chrome.action.setBadgeBackgroundColor({ color: "#FF9385" });
+        chrome.action.setBadgeText({text: " "});
+
         console.log("installed");
         await ws.start();
     });
@@ -47,7 +50,7 @@
                 sendResponse(ws.isStatus());
                 break;
             case "get-historys-update":
-                if(!ws.isStatus())  return;
+                if (!ws.isStatus()) return;
                 ws.send("get");
                 break;
             case "ws-open":
@@ -88,6 +91,10 @@
         } catch (error) {
             console.warn(error);
         }
+
+        status
+            ? chrome.action.setBadgeBackgroundColor({ color: "#86DEC2" })
+            : chrome.action.setBadgeBackgroundColor({ color: "#FF9385" });
     }
 
     const addHistory = async (key, url) => {
