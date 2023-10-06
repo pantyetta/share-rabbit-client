@@ -31,7 +31,7 @@ interface PostProps {
   url: string;
 }
 
-import { useHistory } from "@/stores/history";
+import { useHistory } from "@/stores/historys";
 import { PropType, defineComponent, ref, toRef } from "vue";
 export default defineComponent({
   name: "PostCard",
@@ -49,7 +49,7 @@ export default defineComponent({
     const time = post.value.post?.id.split(":")[2];
 
     const getTime = () => {
-      const date = time ? new Date(Number(time)) : new Date();
+      const date = time ? new Date(Number(time?.slice(0, 13))) : new Date();
       const [month, day, hour, minutes] = [
         ("00" + (date.getMonth() + 1)).slice(-2),
         ("00" + date.getDate()).slice(-2),
@@ -81,5 +81,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style></style>

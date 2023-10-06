@@ -5,7 +5,7 @@
         xmlns="http://www.w3.org/2000/svg"
         height="1em"
         viewBox="0 0 448 512"
-        :class="settings.darkMode ? 'fill-[#c1c1c1]' : 'fill-[#3a3a3a]'"
+        :class="setting.darkMode ? 'fill-[#c1c1c1]' : 'fill-[#3a3a3a]'"
       >
         <!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
         <path
@@ -23,7 +23,8 @@
           type="text"
           placeholder="Type here"
           className="input input-bordered w-full max-w-xs"
-          v-model="settings.uid"
+          v-model="setting.uid"
+          @blur="changeUid()"
         />
       </div>
       <div className="form-control w-full max-w-xs">
@@ -34,12 +35,13 @@
           type="text"
           placeholder="Type here"
           className="input input-bordered w-full max-w-xs"
-          v-model="settings.url"
+          v-model="setting.url"
+          @blur="changeUrl()"
         />
       </div>
       <div>
         <p class="pb-2 pt-2 font-bold">DarkMode</p>
-        <input type="checkbox" class="toggle" v-model="settings.darkMode" />
+        <input type="checkbox" class="toggle" v-model="setting.darkMode" />
       </div>
       <div class="pb-2 pt-2">
         <button class="btn btn-warning" @click="isModal = true">Reset</button>
@@ -56,8 +58,16 @@
     <div class="flex flex-col items-start gap-4 relative">
       <h1 class="mt-4 text-neutral-400 uppercase">debug</h1>
       <div>
-        <p class="pb-2 pt-2 font-bold">dummy</p>
-        <button class="btn" @click="history.testAdd()">add</button>
+        <p class="pb-2 pt-2 font-bold">dummy post</p>
+        <button class="btn" @click="history.testAdd()">run</button>
+      </div>
+      <div>
+        <p class="pb-2 pt-2 font-bold">Get</p>
+        <button class="btn" @click="debugGet()">run</button>
+      </div>
+      <div>
+        <p class="pb-2 pt-2 font-bold">console out historys</p>
+        <button class="btn" @click="debugConsoleOut()">run</button>
       </div>
     </div>
   </div>
@@ -67,7 +77,7 @@
 import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useSettings } from "@/stores/settings";
-import { useHistory } from "@/stores/history";
+import { useHistory } from "@/stores/historys";
 import ErrModal from "@/components/ErrModal.vue";
 
 export default defineComponent({
@@ -77,7 +87,7 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const settings = useSettings();
+    const setting = useSettings();
     const history = useHistory();
 
     const isModal = ref(false);
@@ -88,22 +98,44 @@ export default defineComponent({
 
     const reset = () => {
       isModal.value = false;
-      settings.$reset();
+      setting.$reset();
       history.$reset();
+      chrome.runtime.sendMessage("ws-open");
     };
 
     const cancel = () => {
       isModal.value = false;
     };
 
+    const changeUid = () => {
+      chrome.runtime.sendMessage("update-uid");
+    };
+
+    const changeUrl = () => {
+      chrome.runtime.sendMessage("update-url");
+    };
+
+    const debugGet = () => {
+      chrome.runtime.sendMessage("get-historys-update");
+    };
+
+    const debugConsoleOut = () => {
+      console.log(history.historys);
+    };
+
     return {
       goBack,
-      settings,
+      setting,
       history,
       isModal,
       reset,
       cancel,
+      changeUid,
+      changeUrl,
+      debugGet,
+      debugConsoleOut,
     };
   },
 });
 </script>
+@/stores/historys

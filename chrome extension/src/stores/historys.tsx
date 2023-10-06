@@ -7,34 +7,34 @@ interface historyProp {
 
 const isExtension = location.href.match("^chrome-extension://.+")?.length == 1;
 
-export const useHistory = defineStore("history", {
+export const useHistory = defineStore("historys", {
   state: () => ({
-    history: [] as historyProp[],
+    historys: [] as historyProp[],
   }),
   actions: {
     add(id: string, url: string) {
-      this.history.unshift({ id, url });
+      this.historys.unshift({ id, url });
     },
     remove(id: string) {
-      this.history = this.history.filter((item) => {
+      this.historys = this.historys.filter((item) => {
         return item.id != id;
       });
     },
     testAdd() {
       const key = Math.random().toString(32).substring(2);
-      const time = new Date().getTime();
+      const time = new Date().getTime().toString() + "000000";
       this.add(`0:testUser:${time}`, `https://example.org/${key}`);
     },
     async save() {
       isExtension
         ? await chrome.storage.local.set({
-            ["historys"]: this.history,
+            ["historys"]: this.historys,
           })
-        : localStorage.setItem("historys", JSON.stringify(this.history));
+        : localStorage.setItem("historys", JSON.stringify(this.historys));
     },
     async init(template?: historyProp[]) {
       if (template) {
-        this.history = template;
+        this.historys = template;
         return;
       }
       const historys = isExtension
@@ -47,7 +47,7 @@ export const useHistory = defineStore("history", {
             localStorage.getItem("historys") || "[]"
           ) as historyProp[]);
       if (!historys || historys.length == 0) return;
-      this.history = historys;
+      this.historys = historys;
     },
   },
 });

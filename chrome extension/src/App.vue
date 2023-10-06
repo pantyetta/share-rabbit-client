@@ -7,7 +7,7 @@
 import { defineComponent, onMounted, watch } from "vue";
 import CustomHeader from "./components/CustomHeader.vue";
 import { useSettings } from "@/stores/settings";
-import { useHistory } from "./stores/history";
+import { useHistory } from "./stores/historys";
 
 export default defineComponent({
   name: "App",
@@ -15,7 +15,7 @@ export default defineComponent({
     CustomHeader,
   },
   setup() {
-    const settings = useSettings();
+    const setting = useSettings();
     const history = useHistory();
 
     const dtemp = [
@@ -25,12 +25,13 @@ export default defineComponent({
     ];
 
     onMounted(async () => {
-      await settings.init();
+      await setting.init();
       await history.init();
+      await chrome.runtime.sendMessage("get-historys-update");
     });
 
     watch(
-      () => settings.darkMode,
+      () => setting.darkMode,
       (value) => {
         const $html = document.querySelector("html");
         if ($html == null) return;
@@ -38,12 +39,18 @@ export default defineComponent({
       }
     );
 
-    watch(settings, async (settings) => {
-      await settings.save();
+    watch(setting, async (setting) => {
+      await setting.save();
     });
 
     watch(history, async (history) => {
       await history.save();
+    });
+
+    chrome.runtime.onMessage.addListener(async (message) => {
+      if (message.type === "update-historys") {
+        await history.init();
+      }
     });
   },
 });
@@ -57,3 +64,4 @@ export default defineComponent({
   overflow: hidden;
 }
 </style>
+./stores/historys

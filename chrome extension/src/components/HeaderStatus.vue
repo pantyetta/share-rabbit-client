@@ -1,14 +1,14 @@
 <template>
   <div
-    class="absolute top-0 left-0 h-3 w-full text-[.25rem] flex items-center justify-center"
-    :class="settings.isStatus ? 'bg-success' : 'bg-error'"
+    class="absolute top-0 left-0 h-3 w-full text-[.25rem] flex items-center justify-center cursor-pointer"
+    :class="isStatus ? 'bg-success' : 'bg-error'"
     @click="onClick()"
   >
     <div
-      v-show="!settings.isStatus"
+      v-show="!isStatus"
       class="tracking-widest text-[.5rem] flex gap-1 items-center text-[#fdfdfd]"
     >
-      <span>Reload Connection</span
+      <span>Reload Connection. Click Me</span
       ><svg
         xmlns="http://www.w3.org/2000/svg"
         height="1em"
@@ -24,20 +24,31 @@
 </template>
 
 <script lang="ts">
-import { useSettings } from "@/stores/settings";
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 export default defineComponent({
   name: "HeaderStatus",
   setup() {
-    const settings = useSettings();
+    const isStatus = ref(false);
+
+    chrome.runtime.sendMessage("get-init-status", (response) => {
+      isStatus.value = response;
+    });
+
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message.type === "update-status") {
+        isStatus.value = message.value;
+      }
+    });
 
     const onClick = () => {
-      settings.isStatus = !settings.isStatus;
+      isStatus.value
+        ? chrome.runtime.sendMessage("ws-close")
+        : chrome.runtime.sendMessage("ws-open");
     };
 
     return {
       onClick,
-      settings,
+      isStatus,
     };
   },
 });

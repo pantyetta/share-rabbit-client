@@ -4,7 +4,7 @@
       <button
         class="btn btn-sm mb-2 ml-auto flex"
         @click="isModal = true"
-        v-show="history.history.length > 1"
+        v-show="history.historys.length > 1"
       >
         <span>Clear ALl</span
         ><svg
@@ -30,7 +30,7 @@
     </div>
     <div class="flex flex-col gap-2">
       <PostCard
-        v-for="data in history.history"
+        v-for="data in history.historys"
         :key="data.id"
         :post="data"
       ></PostCard>
@@ -41,7 +41,7 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import PostCard from "@/components/PostCard.vue";
-import { useHistory } from "@/stores/history";
+import { useHistory } from "@/stores/historys";
 import ErrModal from "@/components/ErrModal.vue";
 
 export default defineComponent({
@@ -73,3 +73,4 @@ export default defineComponent({
   },
 });
 </script>
+@/stores/historys

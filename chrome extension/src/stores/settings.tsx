@@ -3,8 +3,7 @@ import { defineStore } from "pinia";
 interface SETTINGSTYPE {
   uid: string;
   url: string;
-  darkmode: boolean;
-  isStatus: boolean;
+  darkmode?: boolean;
 }
 
 const isExtension = location.href.match("^chrome-extension://.+")?.length == 1;
@@ -12,9 +11,8 @@ const isExtension = location.href.match("^chrome-extension://.+")?.length == 1;
 export const useSettings = defineStore("settings", {
   state: () => ({
     uid: "",
-    url: "",
+    url: "wss://rabbit.pantyetta.com",
     darkMode: matchMedia("(prefers-color-scheme: dark)").matches,
-    isStatus: false,
   }),
   actions: {
     async save() {
@@ -24,7 +22,6 @@ export const useSettings = defineStore("settings", {
               uid: this.uid,
               url: this.url,
               darkmode: this.darkMode,
-              isStatus: this.isStatus,
             },
           })
         : localStorage.setItem(
@@ -33,7 +30,6 @@ export const useSettings = defineStore("settings", {
               uid: this.uid,
               url: this.url,
               darkmode: this.darkMode,
-              isStatus: this.isStatus,
             })
           );
     },
@@ -45,12 +41,14 @@ export const useSettings = defineStore("settings", {
         : (JSON.parse(
             localStorage.getItem("settings") || "{}"
           ) as SETTINGSTYPE);
-      console.log(settings);
       if (!settings || !Object.keys(settings).length) return;
       this.uid = settings.uid;
       this.url = settings.url;
-      this.darkMode = settings.darkmode;
-      this.isStatus = settings.isStatus;
+      if (settings.darkmode !== undefined) this.darkMode = settings.darkmode;
+
+      const $html = document.querySelector("html");
+      if ($html == null) return;
+      $html.dataset.theme = this.darkMode ? "dark-rabbit" : "white-rabbit";
     },
     reset() {
       this.$reset();
