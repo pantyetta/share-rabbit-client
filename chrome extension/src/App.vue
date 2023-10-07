@@ -18,12 +18,6 @@ export default defineComponent({
     const setting = useSettings();
     const history = useHistory();
 
-    const dtemp = [
-      { id: "10:pancho:1692372088", url: "https://google.com" },
-      { id: "10:pancho:1696372088", url: "https://youtube.com" },
-      { id: "10:pancho:1694372088", url: "https://google.com" },
-    ];
-
     onMounted(async () => {
       await setting.init();
       await history.init();

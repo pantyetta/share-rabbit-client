@@ -129,7 +129,6 @@
         try {
             await chrome.runtime.sendMessage({ "type": "update-status", "value": status });
         } catch (error) {
-            console.warn(error);
         }
 
         status
@@ -242,7 +241,6 @@
 
                 this.connection.onmessage = (e) => {
                     const json = JSON.parse(e.data);
-                    console.log(json);
                     if (json.type === "tell") {
                         this.onTellmsg(json);
                     } else if (json.type === "get") {
