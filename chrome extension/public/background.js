@@ -30,7 +30,7 @@
         });
 
         chrome.action.setBadgeBackgroundColor({ color: "#FF9385" });
-        chrome.action.setBadgeText({text: " "});
+        chrome.action.setBadgeText({ text: " " });
 
         console.log("installed");
         await ws.start();
@@ -56,7 +56,9 @@
             case "ws-open":
             case "update-url":
                 if (ws.isStatus()) ws.close();
-                await ws.start();
+                setTimeout(async () => {
+                    await ws.start();
+                }, 100);
                 break;
             case "ws-close":
                 if (!ws.isStatus()) return;
@@ -71,6 +73,37 @@
 
     chrome.runtime.onStartup.addListener(async () => {
         if (!ws.isStatus()) await ws.start();
+    });
+
+    chrome.notifications.onClicked.addListener(async (nId) => {
+        const historys = Object.values(await getData("historys"));
+        
+        const targetHistory = historys.find((el) => el.id === nId);
+        if(!targetHistory)  return;
+
+        const Allwindow = await chrome.windows.getAll({
+            windowTypes: ['normal']
+        });
+
+        if (!Allwindow.length) {
+            await chrome.windows.create();
+        }
+
+        chrome.tabs.create({
+            url: targetHistory.url
+        });
+
+        chrome.notifications.clear(nId);
+    });
+
+    chrome.runtime.onSuspend.addListener(() => {
+        if (!ws.isStatus()) return;
+        ws.close();
+    });
+
+    chrome.runtime.onSuspendCanceled.addListener(async () => {
+        if(ws.isStatus())   return;
+        await ws.start();
     });
 
     const getData = async (key) => {
@@ -97,9 +130,7 @@
             : chrome.action.setBadgeBackgroundColor({ color: "#FF9385" });
     }
 
-    const addHistory = async (key, url) => {
-        let historys = Object.values(await getData("historys"));
-        if (historys.find((el) => el.id === key)) return;
+    const addHistory = async (key, url, historys) => {
         historys.unshift({ "id": key, "url": url });
         await chrome.storage.local.set({ ["historys"]: historys });
     }
@@ -116,8 +147,11 @@
     }
 
     const reciveTell = async (json) => {
+        let historys = Object.values(await getData("historys"));
+
         for (const key in json.tell) {
-            await addHistory(key, json.tell[key]);
+            if (historys.some((el) => el.id === key)) continue;
+            await addHistory(key, json.tell[key], historys);
             newNotice(key, json.tell[key]);
         }
         try {
@@ -127,8 +161,11 @@
     }
 
     const reciveGet = async (json) => {
+        let historys = Object.values(await getData("historys"));
+
         for (const key in json.history) {
-            await addHistory(key, json.history[key]);
+            if (historys.some((el) => el.id === key)) continue;
+            await addHistory(key, json.history[key], historys);
         }
         try {
             await chrome.runtime.sendMessage({ "type": "update-historys" });
