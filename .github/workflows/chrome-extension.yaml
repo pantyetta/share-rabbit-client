@@ -17,8 +17,7 @@ jobs:
               uses: actions/setup-node@v3
               with:
                 node-version: 20
-            - run: cd "./chrome extension"
-            - run: npm ci && npm run build
+            - run: cd "./chrome extension" && npm ci && npm run build
             - name: zip output
               run: ls
             - run: zip share_rabbit_client_${{github.ref_name}}.zip "./chrome extension/dist/*"
