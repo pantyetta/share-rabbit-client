@@ -77,9 +77,9 @@
 
     chrome.notifications.onClicked.addListener(async (nId) => {
         const historys = Object.values(await getData("historys"));
-        
+
         const targetHistory = historys.find((el) => el.id === nId);
-        if(!targetHistory)  return;
+        if (!targetHistory) return;
 
         const Allwindow = await chrome.windows.getAll({
             windowTypes: ['normal']
@@ -102,8 +102,15 @@
     });
 
     chrome.runtime.onSuspendCanceled.addListener(async () => {
-        if(ws.isStatus())   return;
+        if (ws.isStatus()) return;
         await ws.start();
+    });
+
+    chrome.idle.onStateChanged.addListener(async (idleState) => {
+        if (idleState === "active") {
+            if(ws.isStatus())   return;
+            await ws.start();
+        }
     });
 
     const getData = async (key) => {
@@ -264,5 +271,4 @@
     ws.onChangeMenu = updateState;
     ws.onTellmsg = reciveTell;
     ws.onGetmsg = reciveGet;
-
 })();
