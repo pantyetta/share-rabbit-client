@@ -19,7 +19,7 @@ jobs:
                 node-version: 20
             - run: cd "./chrome extension" && npm ci && npm run build
             - name: zip output
-              run: cd "./chrome extension" && zip share_rabbit_client_${{github.ref_name}}.zip dist/*
+              run: cd "./chrome extension/dist" && zip -r share_rabbit_client_${{github.ref_name}}.zip ./*
             - name: Create Release
               uses: softprops/action-gh-release@v1
               with:
