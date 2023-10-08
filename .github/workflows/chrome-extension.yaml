@@ -25,4 +25,4 @@ jobs:
               with:
                 name: "Chrome extention ${{github.ref_name}}"
                 tag_name: ${{github.ref_name}}
-                files: "./chrome extension/share_rabbit_client_${{github.ref_name}}.zip"
+                files: "./chrome extension/dist/share_rabbit_client_${{github.ref_name}}.zip"
