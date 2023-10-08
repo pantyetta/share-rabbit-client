@@ -15,26 +15,28 @@
     </a>
     <h1 class="mt-4 text-neutral-400 uppercase">setting</h1>
     <div class="flex flex-col items-start gap-4 relative">
-      <div className="form-control w-full max-w-xs">
-        <label className="label">
-          <span className="label-text font-bold">UID</span>
+      <div class="form-control w-full max-w-xs">
+        <label class="label">
+          <span class="label-text font-bold">UID</span>
         </label>
         <input
           type="text"
           placeholder="Type here"
-          className="input input-bordered w-full max-w-xs"
+          class="input input-bordered w-full max-w-xs"
           v-model="setting.uid"
+          :class="setting.uid ? '' : 'input-error'"
           @blur="changeUid()"
         />
       </div>
-      <div className="form-control w-full max-w-xs">
-        <label className="label">
-          <span className="label-text font-bold">URL</span>
+      <div class="form-control w-full max-w-xs">
+        <label class="label">
+          <span class="label-text font-bold">URL</span>
         </label>
         <input
           type="text"
           placeholder="Type here"
-          className="input input-bordered w-full max-w-xs"
+          class="input input-bordered w-full max-w-xs"
+          :class="checkUrl() ? '' : 'input-error'"
           v-model="setting.url"
           @blur="changeUrl()"
         />
@@ -64,10 +66,6 @@
       <div>
         <p class="pb-2 pt-2 font-bold">Get</p>
         <button class="btn" @click="debugGet()">run</button>
-      </div>
-      <div>
-        <p class="pb-2 pt-2 font-bold">console out historys</p>
-        <button class="btn" @click="debugConsoleOut()">run</button>
       </div>
     </div>
   </div>
@@ -115,12 +113,13 @@ export default defineComponent({
       chrome.runtime.sendMessage("update-url");
     };
 
-    const debugGet = () => {
-      chrome.runtime.sendMessage("get-historys-update");
+    const checkUrl = () => {
+      const re = /^ws{1,2}:\/{2}.+/; // ws://example, wss://example
+      return re.test(setting.url);
     };
 
-    const debugConsoleOut = () => {
-      console.log(history.historys);
+    const debugGet = () => {
+      chrome.runtime.sendMessage("get-historys-update");
     };
 
     return {
@@ -133,7 +132,7 @@ export default defineComponent({
       changeUid,
       changeUrl,
       debugGet,
-      debugConsoleOut,
+      checkUrl,
     };
   },
 });

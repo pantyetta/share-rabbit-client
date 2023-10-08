@@ -32,7 +32,6 @@
         chrome.action.setBadgeBackgroundColor({ color: "#FF9385" });
         chrome.action.setBadgeText({ text: " " });
 
-        console.log("installed");
         await ws.start();
     });
 
@@ -108,7 +107,7 @@
 
     chrome.idle.onStateChanged.addListener(async (idleState) => {
         if (idleState === "active") {
-            if(ws.isStatus())   return;
+            if (ws.isStatus()) return;
             await ws.start();
         }
     });
@@ -214,21 +213,27 @@
         }
 
         start = async () => {
+            const settings = await getData("settings");
+            if (!settings.url || !settings.uid) return;
+
+            let init = false;
             try {
-                const settings = await getData("settings");
-                if (!settings.url || !settings.uid) return;
                 this.connection = new WebSocket(settings.url);
                 this.connection.binaryType = "arraybuffer";
 
                 this.connection.onclose = () => {
-                    console.log("close");
                     this.connection = null;
                     this.status = false;
                     this.onChangeMenu(false);
                 }
 
                 this.connection.onopen = async () => {
-                    console.log("opne");
+                    this.send("init", "request");
+                    await this.wait(1000);
+                    if (!init) {
+                        this.close();
+                        return;
+                    }
                     this.send("rename", settings.uid);
                     this.status = true;
                     this.onChangeMenu(true);
@@ -245,6 +250,8 @@
                         this.onTellmsg(json);
                     } else if (json.type === "get") {
                         this.onGetmsg(json);
+                    } else if (json.type === "init" && json.msg === "success") {
+                        init = true;
                     }
                 }
 
