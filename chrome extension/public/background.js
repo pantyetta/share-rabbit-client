@@ -217,46 +217,46 @@
             if (!settings.url || !settings.uid) return;
 
             let init = false;
-            try {
-                this.connection = new WebSocket(settings.url);
-                this.connection.binaryType = "arraybuffer";
 
-                this.connection.onclose = () => {
-                    this.connection = null;
-                    this.status = false;
-                    this.onChangeMenu(false);
+            this.connection = new WebSocket(settings.url);
+            this.connection.binaryType = "arraybuffer";
+
+            this.connection.onerror = (e) => {
+                console.warn(e);
+            }
+
+            this.connection.onclose = async () => {
+                this.connection = null;
+                this.status = false;
+                this.onChangeMenu(false);
+            }
+
+            this.connection.onopen = async () => {
+                this.status = true;
+                this.send("init", "request");
+                await this.wait(1000);
+                if (!init) {
+                    this.close();
+                    return;
                 }
+                this.send("rename", settings.uid);
+                this.onChangeMenu(true);
 
-                this.connection.onopen = async () => {
-                    this.status = true;
-                    this.send("init", "request");
-                    await this.wait(1000);
-                    if (!init) {
-                        this.close();
-                        return;
-                    }
-                    this.send("rename", settings.uid);
-                    this.onChangeMenu(true);
-
-                    while (this.isStatus()) {
-                        this.send("ping", "ping");
-                        await this.wait(5000);
-                    }
+                while (this.isStatus()) {
+                    this.send("ping", "ping");
+                    await this.wait(5000);
                 }
+            }
 
-                this.connection.onmessage = (e) => {
-                    const json = JSON.parse(e.data);
-                    if (json.type === "tell") {
-                        this.onTellmsg(json);
-                    } else if (json.type === "get") {
-                        this.onGetmsg(json);
-                    } else if (json.type === "init" && json.msg === "success") {
-                        init = true;
-                    }
+            this.connection.onmessage = (e) => {
+                const json = JSON.parse(e.data);
+                if (json.type === "tell") {
+                    this.onTellmsg(json);
+                } else if (json.type === "get") {
+                    this.onGetmsg(json);
+                } else if (json.type === "init" && json.msg === "success") {
+                    init = true;
                 }
-
-            } catch (error) {
-                console.warn(error);
             }
         }
 
