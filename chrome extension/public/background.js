@@ -228,6 +228,7 @@
                 }
 
                 this.connection.onopen = async () => {
+                    this.status = true;
                     this.send("init", "request");
                     await this.wait(1000);
                     if (!init) {
@@ -235,7 +236,6 @@
                         return;
                     }
                     this.send("rename", settings.uid);
-                    this.status = true;
                     this.onChangeMenu(true);
 
                     while (this.isStatus()) {
